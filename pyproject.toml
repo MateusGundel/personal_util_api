@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "personal-util-api"
+version = "0.1.0"
+description = ""
+authors = ["Mateus Gündel <mateus8923@gmail.com>"]
+readme = "README.md"
+packages = [{include = "personal_util_api"}]
+
+[tool.poetry.dependencies]
+python = "3.11.*"
+fastapi = "^0.101.1"
+uvicorn = "^0.23.2"
+pydantic = {extras = ["email"], version = "^2.2.1"}
+sqlalchemy = "^2.0.20"
+pydantic-settings = "^2.0.3"
+alembic = "^1.11.3"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.6"
+isort = "^5.12.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+taskipy = "^1.12.0"
+blue = "^0.9.1"
+ruff = "^0.0.285"
+httpx = "^0.24.1"
+isort = "^5.12.0"
+factory-boy = "^3.3.0"
+freezegun = "^1.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 79
+exclude = ['.venv', 'migrations']
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.pytest.ini_options]
+pythonpath = "."
+
+[tool.blue]
+extend-exclude = '(migrations/)'
+
+[tool.taskipy.tasks]
+lint = 'ruff . && blue --check . --diff'
+format = 'blue .  && isort .'
+run = 'uvicorn personal_util_api.app:app --reload'
+pre_test = 'task lint'
+test = 'pytest -s -x --cov=personal_util_api -vv'
+post_test = 'coverage html'
